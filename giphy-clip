@@ -1,0 +1,34 @@
+#!/usr/bin/env python2
+
+import giphypop
+import sys
+import random
+import clipboard
+from PyQt4 import QtGui
+
+class GetGiphyWidget(QtGui.QWidget):
+
+	def __init__(self):
+		super(GetGiphyWidget, self).__init__()
+		searchInput = QtGui.QInputDialog(self)
+		searchInput.setInputMode(QtGui.QInputDialog.TextInput)
+		searchInput.setLabelText("String to search for")
+		ok = searchInput.exec_()
+		searchString = str(searchInput.textValue().toAscii())
+		print "searching for " + searchString
+		clipboard.copy(self.get_random_giphy(searchString))
+
+	def get_random_giphy(self,term):
+		g = giphypop.Giphy()
+		results = [x for x in g.search(term=term, limit=25, rating='g')] 
+		result = random.choice(results)
+		return result.media_url
+	
+
+def main():
+	app = QtGui.QApplication(sys.argv)
+	giphyWidget = GetGiphyWidget()
+	sys.exit(app.exec_())
+
+if __name__ == "__main__":
+	main()
