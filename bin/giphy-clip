@@ -1,0 +1,9 @@
+#!/usr/bin/env python2
+
+import giphy_clip
+
+def main():
+	giphy_clip.run()
+
+if __name__ == "__main__":
+	main()
