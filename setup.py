@@ -19,7 +19,7 @@ setup(
     keywords = "giphy gif clipboard copy paste",
     packages = ['giphy_clip'],
     scripts = ['bin/giphy-clip'],
-    long_description=read('README'),
+    long_description=read('README.md'),
     install_requires=[
         'giphypop',
     ],
