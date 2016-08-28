@@ -1,10 +1,14 @@
-import urllib2 as urllib
 import signal
 import giphypop
 import sys
 import tempfile
 from PyQt4 import QtGui
 from PyQt4.QtCore import *
+
+if sys.version_info > (3, 0):
+	from urllib.request import urlopen
+else:
+	from urllib2 import urlopen
 
 class GetGiphyLineEdit(QtGui.QLineEdit):
 	def __init__(self):
@@ -38,9 +42,9 @@ class GiphyRetriever(QObject):
 
 	@pyqtSlot(str)
 	def RetrieveGiphy(self, url):
-		print "Retrieving url " + str(url)
+		print("Retrieving url " + str(url))
 		url = str(url)
-		netGiphy = urllib.urlopen(url)
+		netGiphy = urlopen(url)
 		self.tempFile = tempfile.NamedTemporaryFile(mode="wb")
 		while True:
 			chunk = netGiphy.read(4096)
@@ -103,10 +107,10 @@ class GetGiphyWidget(QtGui.QWidget):
 
 	def QueueRetrieveNextGiphy(self):
 		try:
-			self.currentGiphy = self.searchResults.next()
+			self.currentGiphy = next(self.searchResults)
 			self.giphyRetriever.retrieve.emit(self.currentGiphy.fixed_width.url)
 		except StopIteration:
-			print "no more"
+			pass
 
 
 	def DisplayGiphy(self, fileName):
@@ -117,7 +121,7 @@ class GetGiphyWidget(QtGui.QWidget):
 	def CopyToClipboardAndExit(self):
 		if self.currentGiphy == None:
 			self.RetrieveGiphyList()
-			self.currentGiphy = self.searchResults.next().media_url
+			self.currentGiphy = next(self.searchResults).media_url
 		clipboard = QtGui.QApplication.clipboard()
 		clipboard.setText(self.currentGiphy.media_url)
 		QtGui.QApplication.closeAllWindows()
