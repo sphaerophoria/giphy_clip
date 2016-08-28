@@ -12,22 +12,12 @@ else:
 
 class GetGiphyLineEdit(QtGui.QLineEdit):
 	def __init__(self):
-		self.ctrl = False
 		super(GetGiphyLineEdit, self).__init__()
 
 	def keyPressEvent(self, event):
-		if event.modifiers() == Qt.ControlModifier:
-			self.ctrl = True
-		
-		if event.key() == Qt.Key_C and self.ctrl == True:
+		if event.modifiers() & Qt.ControlModifier and event.key() == Qt.Key_C:
 			self.emit(SIGNAL("CopyAndQuit"))
-
 		super(GetGiphyLineEdit, self).keyPressEvent(event)
-
-	def keyReleaseEvent(self, event):
-		if event.modifiers() == Qt.ControlModifier:
-			self.ctrl = False
-		super(GetGiphyLineEdit, self).keyReleaseEvent(event)
 
 class GiphyRetriever(QObject):
 
@@ -82,6 +72,8 @@ class GetGiphyWidget(QtGui.QWidget):
 		layout.addWidget(self.giphySearchInput)
 		layout.addLayout(buttonLayout)
 
+		self.currentGiphy = None
+
 		self.giphy = giphypop.Giphy()
 		self.term = ""
 
@@ -121,7 +113,7 @@ class GetGiphyWidget(QtGui.QWidget):
 	def CopyToClipboardAndExit(self):
 		if self.currentGiphy == None:
 			self.RetrieveGiphyList()
-			self.currentGiphy = next(self.searchResults).media_url
+			self.currentGiphy = next(self.searchResults)
 		clipboard = QtGui.QApplication.clipboard()
 		clipboard.setText(self.currentGiphy.media_url)
 		QtGui.QApplication.closeAllWindows()
